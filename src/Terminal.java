@@ -50,6 +50,53 @@ public class Terminal
         }
     }
 
+    // this function for remove directories
+    public void rmdir(String drc) {
+        try {
+            // Check if the provided directory is "*"
+            if (drc.equals("*")) {
+                // List all directories in the current directory
+                Files.list(currDirectory)
+                        .filter(Files::isDirectory)
+                        .forEach(dir -> {
+                            try {
+                                // Check if the directory is empty
+                                if (Files.list(dir).findFirst().isEmpty()) {
+                                    // If empty, delete the directory
+                                    Files.delete(dir);
+                                    System.out.println("Directory removed: " + dir.toString());
+                                }
+                                // Handle any IOExceptions that occur during deletion
+                            } catch (IOException e) {
+                                System.out.println("Error removing directory: " + e.getMessage());
+                            }
+                        });
+            } else {
+                // Convert the directory name to a Path object
+                Path dir = Paths.get(drc);
+
+                if (Files.isDirectory(dir)) {
+                    // Check if the directory is not empty
+                    if (Files.list(dir).findFirst().isPresent()) {
+                        // Directory is not empty, cannot be removed
+                        System.out.println("Error: Directory is not empty.");
+                    } else {
+                        // Directory is empty, attempt to delete it
+                        Files.delete(dir);
+                        System.out.println("Directory removed: " + dir.toString());
+                    }
+                } else {
+                    // The provided path is not a directory
+                    System.out.println("Error: Not a directory.");
+                }
+            }
+        } catch (IOException exp) {
+            // Handle any IOExceptions that occur during the process
+            System.out.println("Error: " + exp.getMessage());
+        }
+    }
+
+
     //this function to display command history
     public void history()
     {
@@ -82,6 +129,18 @@ public class Terminal
                     mkdir(args);
                 } else
                 {
+                    System.out.println("Invalid arguments!");
+                }
+                break;
+            case "rmdir":
+                if (parser.parse(input)) {
+                    String[] args = parser.getArgs();
+                    if (args.length == 1) {
+                        rmdir(args[0]);
+                    } else {
+                        System.out.println("Invalid arguments!");
+                    }
+                } else {
                     System.out.println("Invalid arguments!");
                 }
                 break;
