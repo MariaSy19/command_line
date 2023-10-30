@@ -31,6 +31,7 @@ public class Terminal
     {
         System.out.println(currDirectory.toAbsolutePath());
     }
+    // this function to create a new directory.
     public void mkdir(String[] drc)
     {
         for (String directory : drc) {
