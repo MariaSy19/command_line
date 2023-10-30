@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Terminal
 {
@@ -57,15 +58,60 @@ public class Terminal
     }
 
 //This method will choose the suitable command method to be called
-    public void chooseCommandAction(String ch)
+    public void chooseCommandAction(String ch, String input)
     {
         switch (ch)
         {
+            case "echo":
+                if (parser.parse(input))
+                {
+                    echo(parser.getArgs());
+                }
+                break;
+            case "pwd":
+                pwd();
+                break;
+            case "history":
+                history();
+                break;
+            case "mkdir":
+                if (parser.parse(input))
+                {
+                    String[] args = parser.getArgs();
+                    mkdir(args);
+                } else
+                {
+                    System.out.println("Invalid arguments!");
+                }
+                break;
             default:
                 System.out.println("command not found");
 
         }
     }
-    public static void main(String[] args){}
+    public static void main(String[] args)
+    {
+        Terminal terminal = new Terminal();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true)
+        {
+            System.out.print("> ");
+            String input = scanner.nextLine();
+
+            if (input.equals("exit")) {
+                break;
+            }
+
+            terminal.histComm.add(input);
+
+            String[] inputParts = input.split(" ");
+            String command = inputParts[0];
+            String[] arguments = new String[inputParts.length - 1];
+            System.arraycopy(inputParts, 1, arguments, 0, arguments.length);
+
+            terminal.chooseCommandAction(command, input);
+        }
+    }
 
 }
