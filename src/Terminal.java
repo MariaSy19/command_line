@@ -98,7 +98,6 @@ public class Terminal
         }
     }
 
-
     //this function to display command history
     public void history()
     {
@@ -110,9 +109,9 @@ public class Terminal
     public void touch(String []args)
     {
         File file;
-        if(args[0].contains(":"))
+        if(args[0].contains(":"))///////////////
         {
-            file = new File(args[0]);
+            file=new File(args[0]);
         }
         else
         {
@@ -124,8 +123,12 @@ public class Terminal
             {
                 file.createNewFile();
             }
+            else
+            {
+                System.out.println("File already exists");
+            }
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             System.out.println(e);
         }
@@ -143,31 +146,47 @@ public class Terminal
             System.out.println("file does not exist");
         }
     }
+    //this function to create directory
+    public void cd(String []args)
+    {
+        if(args.length == 0)
+        {
+            currDirectory=  Paths.get(System.getProperty("user.home"));
+        }
+        else if(args.length==1 && args[0].equals(".."))
+        {
+            currDirectory = currDirectory.getParent();
+        }
+        else//////////////
+        {
+            System.out.println("ERROR");
+        }
+    }
+    //this function to print content of one or two files
     public void cat(String [] args)
     {
         try
         {
-            for (int i = 0; i < args.length; i++)
+            for (int i = 0; i < args.length; i++) 
             {
                 File file = new File(args[i]);
                 Scanner fileReader = new Scanner(file);
-                while (fileReader.hasNextLine())
+                while (fileReader.hasNextLine()) 
                 {
                     String data = fileReader.nextLine();
                     System.out.println(data);
-
+                    
                 }
                 fileReader.close();
             }
         }
-        catch (FileNotFoundException e)
+        catch (FileNotFoundException e) 
         {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
-
-//This method will choose the suitable command method to be called
+    //This method will choose the suitable command method to be called
     public void chooseCommandAction(String ch, String input)
     {
         switch (ch)
@@ -179,7 +198,10 @@ public class Terminal
                 }
                 break;
             case "pwd":
-                pwd();
+                if(parser.parse(input))
+                {
+                    pwd();
+                }
                 break;
             case "history":
                 history();
@@ -189,22 +211,14 @@ public class Terminal
                 {
                     String[] args = parser.getArgs();
                     mkdir(args);
-                } else
-                {
-                    System.out.println("Invalid arguments!");
                 }
                 break;
             case "rmdir":
-                if (parser.parse(input)) {
+                if (parser.parse(input)) 
+                {
                     String[] args = parser.getArgs();
-                    if (args.length == 1) {
-                        rmdir(args[0]);
-                    } else {
-                        System.out.println("Invalid arguments!");
-                    }
-                } else {
-                    System.out.println("Invalid arguments!");
-                }
+                    rmdir(args[0]);
+                } 
                 break;
             case "touch":
                 if (parser.parse(input))
@@ -223,6 +237,12 @@ public class Terminal
                 {
                     cat(parser.getArgs());
                 }
+                break; 
+            case "cd":
+                if (parser.parse(input))
+                {
+                    cd(parser.getArgs());
+                } 
                 break;
             default:
                 System.out.println("command not found");
@@ -252,6 +272,7 @@ public class Terminal
 
             terminal.chooseCommandAction(command, input);
         }
+        scanner.close();
     }
 
 }
