@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -104,6 +106,66 @@ public class Terminal
             System.out.println((var + 1) + " " + histComm.get(var));
         }
     }
+    //this function to create file
+    public void touch(String []args)
+    {
+        File file;
+        if(args[0].contains(":"))
+        {
+            file = new File(args[0]);
+        }
+        else
+        {
+            file=new File(currDirectory+ "\\" + args[0]);
+        }
+        try
+        {
+            if(! new File(args[0]).exists())
+            {
+                file.createNewFile();
+            }
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+    //this function to remove file
+    public void rm(String [] fileName)
+    {
+        File file = new File(fileName[0]);
+        if(file.exists())
+        {
+            file.delete();
+        }
+        else if(!file.exists())
+        {
+            System.out.println("file does not exist");
+        }
+    }
+    public void cat(String [] args)
+    {
+        try
+        {
+            for (int i = 0; i < args.length; i++)
+            {
+                File file = new File(args[i]);
+                Scanner fileReader = new Scanner(file);
+                while (fileReader.hasNextLine())
+                {
+                    String data = fileReader.nextLine();
+                    System.out.println(data);
+
+                }
+                fileReader.close();
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
 //This method will choose the suitable command method to be called
     public void chooseCommandAction(String ch, String input)
@@ -142,6 +204,24 @@ public class Terminal
                     }
                 } else {
                     System.out.println("Invalid arguments!");
+                }
+                break;
+            case "touch":
+                if (parser.parse(input))
+                {
+                    touch(parser.getArgs());
+                }
+                break;
+            case "rm":
+                if (parser.parse(input))
+                {
+                    rm(parser.getArgs());
+                }
+                break;
+            case "cat":
+                if (parser.parse(input))
+                {
+                    cat(parser.getArgs());
                 }
                 break;
             default:
