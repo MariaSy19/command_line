@@ -36,18 +36,21 @@ public class Terminal
     // this function to create a new directory.
     public void mkdir(String[] drc)
     {
-        for (String directory : drc) {
+        for (String directory : drc)
+        {
             // Create a Path object representing the directory
             Path newDirectory = Paths.get(directory);
-
-            try {
-                Files.createDirectories(newDirectory);//create nonexistent directory
-                System.out.println("Directory created: " + newDirectory.toString());
-            } catch (FileAlreadyExistsException exp) {
-                // if directory already exists
+            //check if the new Directory is already exist
+            if (Files.exists(newDirectory))
+            {
                 System.out.println("Directory already exists: " + newDirectory.toString());
-            } catch (Exception exp) {
-                System.out.println("Error creating directory: " + exp.getMessage());
+            } else {
+                try {
+                    Files.createDirectories(newDirectory);//create nonexistent directory
+                    System.out.println("Directory created: " + newDirectory.toString());
+                } catch (Exception exp) {
+                    System.out.println("Error creating directory: " + exp.getMessage());
+                }
             }
         }
     }
