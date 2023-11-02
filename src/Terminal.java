@@ -1,13 +1,21 @@
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.StandardCopyOption;
 
 public class Terminal
 {
@@ -109,51 +117,46 @@ public class Terminal
         }
     }
     public void ls() {
-    try {
-        Files.list(currDirectory).forEach(path -> {
-            System.out.println(path.getFileName());
-        });
-    } catch (IOException e) {
-        System.out.println("Error listing files and directories: " + e.getMessage());
-    }
-}
-    public void lsRecursive() {
         try {
-            Files.walk(currDirectory).forEach(path -> {
-                System.out.println(path);
-            });
+            // List the contents of the current directory
+            Files.list(currDirectory)
+                    .map(path -> path.getFileName().toString()) // Extract file/directory names
+                    .sorted() // Sort alphabetically
+                    .forEach(System.out::println);
         } catch (IOException e) {
-            System.out.println("Error listing files and directories recursively: " + e.getMessage());
+            System.out.println("Error listing files and directories: " + e.getMessage());
         }
     }
-    public void redirectOutput(String filename, String[] commandArgs) {
-    try {
-        String commandOutput = null;
-        if (commandArgs != null) {
-            commandOutput = String.join(" ", commandArgs);
-        }
 
-        FileWriter fileWriter = new FileWriter(filename);
-        fileWriter.write(commandOutput + "\n");
-        fileWriter.close();
-        System.out.println("Output redirected to: " + filename);
-    } catch (IOException e) {
-        System.err.println("Error writing to file: " + e.getMessage());
-    }
-}
-    public void appendOutput(String filename, String[] commandArgs) {
+    public void lsReverse() {
         try {
-            String commandOutput = null;
-            if (commandArgs != null) {
-                commandOutput = String.join(" ", commandArgs);
+            // List the contents of the current directory in reverse order
+            Path[] filesAndDirs = Files.list(currDirectory)
+                    .map(Path::getFileName)
+                    .sorted((p1, p2) -> p2.toString().compareTo(p1.toString())) // Sort in reverse order
+                    .toArray(Path[]::new);
+
+            for (Path path : filesAndDirs) {
+                System.out.println(path.getFileName());
             }
-
-            FileWriter fileWriter = new FileWriter(filename, true);
-            fileWriter.write(commandOutput + "\n");
-            fileWriter.close();
-            System.out.println("Output appended to: " + filename);
         } catch (IOException e) {
-            System.err.println("Error writing to file: " + e.getMessage());
+            System.out.println("Error listing files and directories in reverse order: " + e.getMessage());
+        }
+    }
+    public void cp(String[] args) {
+        if (args.length != 2) {
+            System.out.println("Usage: cp <source_file> <destination_file>");
+            return;
+        }
+
+        Path sourceFile = Paths.get(args[0]);
+        Path destinationFile = Paths.get(args[1]);
+
+        try {
+            Files.copy(sourceFile, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File copied successfully.");
+        } catch (IOException e) {
+            System.err.println("Error copying the file: " + e.getMessage());
         }
     }
 
@@ -297,26 +300,16 @@ public class Terminal
                     cd(parser.getArgs());
                 } 
                 break;
-                case "ls":
+                 case "ls":
                 ls();
                 break;
             case "ls-r":
-                lsRecursive();
+                lsReverse();
                 break;
-            case ">":
-                if (parser.parse(input)) {
-                    String[] args = parser.getArgs();
-                    redirectOutput(args[0], args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null);
-                } else {
-                    System.out.println("Invalid arguments!");
-                }
-                break;
-            case ">>":
-                if (parser.parse(input)) {
-                    String[] args = parser.getArgs();
-                    appendOutput(args[0], args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null);
-                } else {
-                    System.out.println("Invalid arguments!");
+           case "cd":
+                if (parser.parse(input))
+                {
+                    cd(parser.getArgs());
                 }
                 break;
             default:
