@@ -108,6 +108,56 @@ public class Terminal
             System.out.println((var + 1) + " " + histComm.get(var));
         }
     }
+    public void ls() {
+    try {
+        Files.list(currDirectory).forEach(path -> {
+            System.out.println(path.getFileName());
+        });
+    } catch (IOException e) {
+        System.out.println("Error listing files and directories: " + e.getMessage());
+    }
+}
+    public void lsRecursive() {
+        try {
+            Files.walk(currDirectory).forEach(path -> {
+                System.out.println(path);
+            });
+        } catch (IOException e) {
+            System.out.println("Error listing files and directories recursively: " + e.getMessage());
+        }
+    }
+    public void redirectOutput(String filename, String[] commandArgs) {
+    try {
+        String commandOutput = null;
+        if (commandArgs != null) {
+            commandOutput = String.join(" ", commandArgs);
+        }
+
+        FileWriter fileWriter = new FileWriter(filename);
+        fileWriter.write(commandOutput + "\n");
+        fileWriter.close();
+        System.out.println("Output redirected to: " + filename);
+    } catch (IOException e) {
+        System.err.println("Error writing to file: " + e.getMessage());
+    }
+}
+    public void appendOutput(String filename, String[] commandArgs) {
+        try {
+            String commandOutput = null;
+            if (commandArgs != null) {
+                commandOutput = String.join(" ", commandArgs);
+            }
+
+            FileWriter fileWriter = new FileWriter(filename, true);
+            fileWriter.write(commandOutput + "\n");
+            fileWriter.close();
+            System.out.println("Output appended to: " + filename);
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+
     //this function to create file
     public void touch(String []args)
     {
@@ -246,6 +296,28 @@ public class Terminal
                 {
                     cd(parser.getArgs());
                 } 
+                break;
+                case "ls":
+                ls();
+                break;
+            case "ls-r":
+                lsRecursive();
+                break;
+            case ">":
+                if (parser.parse(input)) {
+                    String[] args = parser.getArgs();
+                    redirectOutput(args[0], args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null);
+                } else {
+                    System.out.println("Invalid arguments!");
+                }
+                break;
+            case ">>":
+                if (parser.parse(input)) {
+                    String[] args = parser.getArgs();
+                    appendOutput(args[0], args.length > 1 ? Arrays.copyOfRange(args, 1, args.length) : null);
+                } else {
+                    System.out.println("Invalid arguments!");
+                }
                 break;
             default:
                 System.out.println("command not found");
