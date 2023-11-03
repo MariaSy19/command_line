@@ -1,20 +1,12 @@
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.io.File;
 import java.io.FileNotFoundException;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.StandardCopyOption;
 
 public class Terminal
@@ -31,7 +23,8 @@ public class Terminal
     public void echo(String[] str)
     {
 
-        for (String arg : str) {
+        for (String arg : str)
+        {
             System.out.print(arg + " "); // print each argument separated by a space
         }
         System.out.println();
@@ -67,45 +60,46 @@ public class Terminal
     public void rmdir(String drc) {
         try {
             // Check if the provided directory is "*"
-            if (drc.equals("*")) {
+            if (drc.equals("*"))
+            {
                 // List all directories in the current directory
                 Files.list(currDirectory)
                         .filter(Files::isDirectory)
-                        .forEach(dir -> {
+                        .forEach(directory -> {
                             try {
                                 // Check if the directory is empty
-                                if (Files.list(dir).findFirst().isEmpty()) {
+                                if (Files.list(directory).findFirst().isEmpty()) {
                                     // If empty, delete the directory
-                                    Files.delete(dir);
-                                    System.out.println("Directory removed: " + dir.toString());
+                                    Files.delete(directory);
+                                    System.out.println("Directory removed: " + directory.toString());
                                 }
-                                // Handle any IOExceptions that occur during deletion
-                            } catch (IOException e) {
-                                System.out.println("Error removing directory: " + e.getMessage());
+                            } catch (IOException exp)
+                            {
+                                System.out.println("error removing directory: " + exp.getMessage());
                             }
                         });
             } else {
-                // Convert the directory name to a Path object
-                Path dir = Paths.get(drc);
 
-                if (Files.isDirectory(dir)) {
+                Path directory = Paths.get(drc);
+
+                if (Files.isDirectory(directory)) {
                     // Check if the directory is not empty
-                    if (Files.list(dir).findFirst().isPresent()) {
+                    if (Files.list(directory).findFirst().isPresent()) {
                         // Directory is not empty, cannot be removed
-                        System.out.println("Error: Directory is not empty.");
+                        System.out.println("error: Directory isn't empty.");
                     } else {
                         // Directory is empty, attempt to delete it
-                        Files.delete(dir);
-                        System.out.println("Directory removed: " + dir.toString());
+                        Files.delete(directory);
+                        System.out.println("Directory removed: " + directory.toString());
                     }
                 } else {
                     // The provided path is not a directory
-                    System.out.println("Error: Not a directory.");
+                    System.out.println("error: Not a directory.");
                 }
             }
         } catch (IOException exp) {
             // Handle any IOExceptions that occur during the process
-            System.out.println("Error: " + exp.getMessage());
+            System.out.println("error: " + exp.getMessage());
         }
     }
 
@@ -360,6 +354,8 @@ public class Terminal
                     cpR(args);
                 }
                 break;
+            case "exit":
+                break;
             default:
                 System.out.println("command not found");
 
@@ -375,7 +371,8 @@ public class Terminal
             System.out.print("> ");
             String input = scanner.nextLine();
 
-            if (input.equals("exit")) {
+            if (input.equals("exit") )
+            {
                 break;
             }
 

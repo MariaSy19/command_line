@@ -22,12 +22,12 @@ class Parser {
             System.out.println("ERROR: " + commandName + " not take any argumnent!");
             return false;
         }
-        if(( commandName.equals("echo") || commandName.equals("mkdir") ||commandName.equals("cat") ) && args.length == 0 )
+        if(( commandName.equals("rmdir") ||commandName.equals("echo") || commandName.equals("mkdir") ||commandName.equals("cat") ) && args.length == 0 )
         {
             System.out.println("ERROR: " + commandName + " take at least 1 argument!");
             return false;
         }
-        if(( commandName.equals("rmdir") ||commandName.equals("touch")
+        if(( commandName.equals("touch")
             ||commandName.equals("rm") ) && args.length != 1 )
         {
             System.out.println("ERROR: " + commandName + " take one argument!");
