@@ -238,7 +238,7 @@ public class Terminal
         }
     }
     //this function to create directory
-    public void cd(String []args)
+   public void cd(String []args)
     {
         if(args.length == 0)
         {
@@ -248,7 +248,12 @@ public class Terminal
         {
             currDirectory = currDirectory.getParent();
         }
-        else//////////////
+        else if(args[0].contains(":"))
+        {
+            Path newDir = Paths.get(System.getProperty("user.dir"));
+            currDirectory =newDir;
+        }
+        else
         {
             System.out.println("ERROR");
         }
