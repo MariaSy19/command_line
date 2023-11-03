@@ -335,24 +335,26 @@ public class Terminal
                     cat(parser.getArgs());
                 }
                 break; 
-            case "cd":
+                case "cd":
                 if (parser.parse(input))
                 {
                     cd(parser.getArgs());
-                } 
+                }
                 break;
-                 case "ls":
+            case "ls":
                 ls();
                 break;
             case "ls-r":
                 lsReverse();
                 break;
-           case "cd":
-                if (parser.parse(input))
-                {
-                    cd(parser.getArgs());
+           
+            case "cp":
+                if (parser.parse(input)) {
+                    String[] args = parser.getArgs();
+                    cp(args);
                 }
-                case "cp-r":
+                break;
+            case "cp-r":
                 if (parser.parse(input)) {
                     String[] args = parser.getArgs();
                     cpR(args);
