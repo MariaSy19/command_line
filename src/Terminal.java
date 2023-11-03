@@ -159,6 +159,47 @@ public class Terminal
             System.err.println("Error copying the file: " + e.getMessage());
         }
     }
+     public void cpR(String[] args) {
+        if (args.length != 2) {
+            System.out.println("Usage: cp -r <source_directory> <destination_directory>");
+            return;
+        }
+
+        Path sourceDirectory = Paths.get(args[0]);
+        Path destinationDirectory = Paths.get(args[1]);
+
+        if (!Files.exists(sourceDirectory) || !Files.isDirectory(sourceDirectory)) {
+            System.err.println("Source directory does not exist or is not a directory.");
+            return;
+        }
+
+        if (!Files.exists(destinationDirectory) || !Files.isDirectory(destinationDirectory)) {
+            System.err.println("Destination directory does not exist or is not a directory.");
+            return;
+        }
+
+        try {
+            Files.walk(sourceDirectory)
+                    .forEach(sourcePath -> {
+                        Path relativePath = sourceDirectory.relativize(sourcePath);
+                        Path destinationPath = destinationDirectory.resolve(relativePath);
+
+                        try {
+                            if (Files.isDirectory(sourcePath)) {
+                                Files.createDirectories(destinationPath);
+                            } else {
+                                Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        } catch (IOException e) {
+                            System.err.println("Error copying the file/directory: " + e.getMessage());
+                        }
+                    });
+
+            System.out.println("Directory and its contents copied successfully.");
+        } catch (IOException e) {
+            System.err.println("Error copying the directory: " + e.getMessage());
+        }
+    }
 
 
     //this function to create file
@@ -310,6 +351,11 @@ public class Terminal
                 if (parser.parse(input))
                 {
                     cd(parser.getArgs());
+                }
+                case "cp-r":
+                if (parser.parse(input)) {
+                    String[] args = parser.getArgs();
+                    cpR(args);
                 }
                 break;
             default:
